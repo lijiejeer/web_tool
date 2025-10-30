@@ -5,6 +5,21 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
 项目遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [1.1.0] - 2024-10-30
+
+### ✨ 新增功能
+
+- 💾 **备份恢复**
+  - 一键备份数据为 ZIP 压缩包
+  - 包含数据库和上传文件
+  - 支持上传 ZIP 文件恢复数据
+  - 显示备份信息统计
+
+### 🗑️ 移除
+
+- 删除原始静态 HTML 文件（index.html, about/, assets/, 404.html）
+- 仅保留迁移后的 Vue 3 项目
+
 ## [1.0.0] - 2024-10-30
 
 ### 🎉 项目重构

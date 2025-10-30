@@ -14,6 +14,7 @@ import adRoutes from './routes/ads.js';
 import friendlinkRoutes from './routes/friendlinks.js';
 import statsRoutes from './routes/stats.js';
 import uploadRoutes from './routes/upload.js';
+import backupRoutes from './routes/backup.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -40,6 +41,7 @@ app.use('/api/ads', adRoutes);
 app.use('/api/friendlinks', friendlinkRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/backup', backupRoutes);
 
 // 健康检查
 app.get('/api/health', (req, res) => {

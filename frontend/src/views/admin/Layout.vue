@@ -35,6 +35,10 @@
           <el-icon><Document /></el-icon>
           <span>登录日志</span>
         </el-menu-item>
+        <el-menu-item index="/admin/backup">
+          <el-icon><FolderOpened /></el-icon>
+          <span>备份恢复</span>
+        </el-menu-item>
       </el-menu>
     </el-aside>
     <el-container>

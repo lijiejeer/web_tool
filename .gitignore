@@ -40,5 +40,5 @@ tmp/
 temp/
 *.tmp
 
-# Note: Old static files are kept for reference
-# about/, assets/, 404.html, and original index.html are preserved
+# Backup files
+*.backup
