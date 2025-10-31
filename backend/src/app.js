@@ -7,6 +7,7 @@ import { dirname } from 'path';
 
 import { initDatabase } from './config/database.js';
 import { seedExampleData } from './utils/seedData.js';
+import { initAutoBackup } from './services/autoBackup.js';
 import authRoutes from './routes/auth.js';
 import categoryRoutes from './routes/categories.js';
 import cardRoutes from './routes/cards.js';
@@ -33,6 +34,9 @@ app.use(express.urlencoded({ extended: true }));
 // 静态文件服务 - 上传的文件
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
+// 静态文件服务 - 前端构建文件
+app.use(express.static(path.join(__dirname, '../public')));
+
 // API 路由
 app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoryRoutes);
@@ -48,6 +52,11 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// SPA 路由支持 - 所有非API请求返回index.html
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/index.html'));
+});
+
 // 初始化数据库
 initDatabase();
 
@@ -55,6 +64,9 @@ initDatabase();
 if (process.env.NODE_ENV === 'development') {
   seedExampleData();
 }
+
+// 启动自动备份
+initAutoBackup();
 
 // 启动服务器
 app.listen(PORT, () => {

@@ -53,19 +53,39 @@
 
 ## 📦 安装部署
 
-### 环境要求
+### 🐳 Docker 部署（推荐）
+
+使用 Docker 快速部署，无需配置 Node.js 环境：
+
+```bash
+# 使用 docker-compose
+docker-compose up -d
+
+# 或直接运行
+docker run -d -p 3000:3000 \
+  -v $(pwd)/data:/app/data \
+  <your-dockerhub-username>/webtool:latest
+```
+
+访问 http://localhost:3000，默认账号：`admin` / `123456`
+
+详细说明请查看 [Docker 部署文档](./DOCKER_DEPLOY.md)
+
+### 💻 手动部署
+
+#### 环境要求
 
 - Node.js >= 16.x
 - npm 或 yarn 或 pnpm
 
-### 1. 克隆项目
+#### 1. 克隆项目
 
 ```bash
 git clone <repository-url>
 cd web_tool
 ```
 
-### 2. 配置环境变量
+#### 2. 配置环境变量
 
 后端配置文件：
 
@@ -82,6 +102,8 @@ NODE_ENV=development
 JWT_SECRET=your-secret-key-change-this-in-production
 ADMIN_USERNAME=admin
 ADMIN_PASSWORD=123456
+AUTO_BACKUP_SCHEDULE=daily
+TZ=Asia/Shanghai
 ```
 
 ### 3. 安装依赖
@@ -124,10 +146,36 @@ npm run dev
 
 前端服务将在 `http://localhost:5173` 启动
 
-### 5. 访问应用
+#### 5. 生产构建和部署
 
-- **前端页面**：http://localhost:5173
-- **管理后台**：http://localhost:5173/admin
+构建前端：
+
+```bash
+cd frontend
+npm run build
+```
+
+构建产物会输出到 `backend/public` 目录。
+
+启动生产服务器：
+
+```bash
+cd backend
+NODE_ENV=production npm start
+```
+
+访问 http://localhost:3000
+
+### 6. 访问应用
+
+- **开发环境**：
+  - 前端页面：http://localhost:5173
+  - 管理后台：http://localhost:5173/admin
+  
+- **生产环境**：
+  - 应用首页：http://localhost:3000
+  - 管理后台：http://localhost:3000/admin
+
 - **默认管理员账号**：
   - 用户名：`admin`
   - 密码：`123456`

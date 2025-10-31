@@ -5,6 +5,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import db from '../config/database.js';
+import { getAutoBackupList, triggerManualBackup } from '../services/autoBackup.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -21,7 +22,7 @@ export const createBackup = async (req, res) => {
 
     // 创建压缩流
     const archive = archiver('zip', {
-      zlib: { level: 9 } // 最高压缩级别
+      zlib: { level: 9 }
     });
 
     // 错误处理
@@ -42,7 +43,6 @@ export const createBackup = async (req, res) => {
     // 添加上传的文件目录
     const uploadsPath = path.join(__dirname, '../../uploads');
     if (fs.existsSync(uploadsPath)) {
-      // 获取所有上传的文件，排除 .gitkeep
       const files = fs.readdirSync(uploadsPath).filter(file => file !== '.gitkeep');
       files.forEach(file => {
         const filePath = path.join(uploadsPath, file);
@@ -143,9 +143,6 @@ export const restoreBackup = async (req, res) => {
     });
 
     console.log('Backup restored successfully');
-
-    // 建议重启服务器
-    console.log('Please restart the server to ensure all changes take effect');
   } catch (error) {
     console.error('Restore backup error:', error);
 
@@ -203,6 +200,13 @@ export const getBackupInfo = (req, res) => {
       return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
     };
 
+    // 获取自动备份列表
+    const autoBackups = getAutoBackupList().map(backup => ({
+      name: backup.name,
+      size: formatSize(backup.size),
+      createdAt: backup.createdAt
+    }));
+
     res.json({
       database: {
         size: dbSize,
@@ -216,10 +220,26 @@ export const getBackupInfo = (req, res) => {
       total: {
         size: dbSize + uploadsSize,
         sizeFormatted: formatSize(dbSize + uploadsSize)
-      }
+      },
+      autoBackups: autoBackups,
+      autoBackupSchedule: process.env.AUTO_BACKUP_SCHEDULE || 'disabled'
     });
   } catch (error) {
     console.error('Get backup info error:', error);
     res.status(500).json({ error: 'Failed to get backup info' });
+  }
+};
+
+// 手动触发自动备份
+export const createAutoBackup = async (req, res) => {
+  try {
+    const backupPath = await triggerManualBackup();
+    res.json({ 
+      message: 'Auto backup created successfully',
+      path: path.basename(backupPath)
+    });
+  } catch (error) {
+    console.error('Create auto backup error:', error);
+    res.status(500).json({ error: 'Failed to create auto backup' });
   }
 };

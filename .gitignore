@@ -24,6 +24,10 @@ database.db
 backend/uploads/*
 !backend/uploads/.gitkeep
 
+# Backups
+backend/backups/
+backend/public/
+
 # IDE
 .vscode/
 .idea/

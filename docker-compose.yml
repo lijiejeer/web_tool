@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  webtool:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: webtool-nav
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - JWT_SECRET=${JWT_SECRET:-change-this-secret-key}
+      - ADMIN_USERNAME=${ADMIN_USERNAME:-admin}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-123456}
+      - AUTO_BACKUP_SCHEDULE=${AUTO_BACKUP_SCHEDULE:-daily}
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./data/database.db:/app/database.db
+      - ./data/uploads:/app/uploads
+      - ./data/backups:/app/backups
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+volumes:
+  data:

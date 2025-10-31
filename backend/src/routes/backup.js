@@ -3,7 +3,7 @@ import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import { createBackup, restoreBackup, getBackupInfo } from '../controllers/backupController.js';
+import { createBackup, restoreBackup, getBackupInfo, createAutoBackup } from '../controllers/backupController.js';
 import { authenticateToken } from '../middleware/auth.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -40,5 +40,6 @@ const upload = multer({
 router.get('/info', authenticateToken, getBackupInfo);
 router.get('/download', authenticateToken, createBackup);
 router.post('/restore', authenticateToken, upload.single('backup'), restoreBackup);
+router.post('/auto', authenticateToken, createAutoBackup);
 
 export default router;
